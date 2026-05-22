@@ -4,12 +4,13 @@ import plotly.graph_objects as go
 from PIL import Image
 import os
 
-# 1. Өгөгдөл холболт
+# 1. Өгөгдөл холболт (Кэшийг 5 секунд болгов. Sheet шинэчлэгдэхэд дашборд шууд дагана)
 sheet_id = "1YPHKmtE1F-xttYzvk5g0EZsK6GF7Z4fr5GgjTqZeZDE"
 sheet_url = f"https://docs.google.com/spreadsheets/d/{sheet_id}/export?format=csv&gid=0"
 
 st.set_page_config(page_title="DSEDN Dashboard", layout="wide")
 
+@st.cache_data(ttl=5)
 def load_data():
     return pd.read_csv(sheet_url, header=None)
 
@@ -23,7 +24,7 @@ try:
             return float(str(val).replace(',', '').replace(' ', '').replace('₮', ''))
         except: return 0.0
 
-    # --- 1. SIDEBAR: ШИНЭ ЛОГО БОЛОН ГАРЫН ҮСЭГ ---
+    # --- 1. SIDEBAR: ЛОГО БОЛОН ХЭЛТСИЙН НЭР ---
     logo_path = "ДСТЦС ХК.png" # Энэ файл app.py-тай хамт байх ёстой
     if os.path.exists(logo_path):
         img = Image.open(logo_path)
@@ -39,11 +40,13 @@ try:
     
     st.sidebar.write("---")
     
-    # Датаг бэлдэх
+    # --- GOOGLE SHEET-ИЙН БОДИТ МӨРҮҮДЭД ТОХИРУУЛСАН ДАТА (6-10-р мөр) ---
     branches = ["Дархан - ХҮТ", "Зүүнхараа", "Сүхбаатар", "Хөтөл", "Жаргалант"]
-    bichilt_vals = [clean_val(17, 3), clean_val(28, 3), clean_val(39, 3), clean_val(51, 3), clean_val(62, 3)]
-    orlogo_vals = [clean_val(17, 4), clean_val(28, 4), clean_val(39, 4), clean_val(51, 4), clean_val(62, 4)]
-    percent_vals = [clean_val(17, 12), clean_val(28, 12), clean_val(39, 12), clean_val(51, 12), clean_val(62, 12)]
+    
+    # Index 5=Мөр 6, Index 6=Мөр 7, Index 7=Мөр 8, Index 8=Мөр 9, Index 9=Мөр 10
+    bichilt_vals = [clean_val(5, 3), clean_val(6, 3), clean_val(7, 3), clean_val(8, 3), clean_val(9, 3)] # D багана
+    orlogo_vals = [clean_val(5, 4), clean_val(6, 4), clean_val(7, 4), clean_val(8, 4), clean_val(9, 4)]   # E багана
+    percent_vals = [clean_val(5, 12), clean_val(6, 12), clean_val(7, 12), clean_val(8, 12), clean_val(9, 12)] # M багана
 
     df_full = pd.DataFrame({
         "Салбар": branches,
